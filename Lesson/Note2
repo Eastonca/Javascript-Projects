@@ -1,0 +1,75 @@
+// ARRAY
+let fruits = ["apple", "orange", "banana"];
+
+fruits[3] = "coconut";
+fruits.push("grape");
+fruits.pop();
+fruits.unshift("mango"); // add Mango to the start
+fruits.shift(); // remove element from the start
+
+fruits.length;
+fruits.indexOf("apple"); // -1 if not found
+
+for (let i = 0; i < fruits.length; i++) {
+    // wtv
+}
+
+for (let fruit of fruits) {
+
+}
+
+fruits.sort().reverse(); // sort by abc 
+
+// 2D ARRAY
+const matrix = [[1, 2, 3], 
+                [4, 5, 6], 
+                [7, 8, 9]];
+
+matrix[0][0] = 'X';
+
+for (let row of matrix) {
+    const rowString = row.join(' ');
+}
+
+// SPREAD OPERATOR
+let numbers = [1, 2, 3, 4, 5];
+let maximum = Math.max(...numbers); // unpack that list into seperate elements
+let username = "Mama mia";
+let letters = [...username].join("-");
+
+let fruits = ["apple", "orange", "banana"];
+let vegetables = ["carrots", "celery", "potatoes"];
+
+let foods = [...fruits, ...vegetables, "eggs", "milk"];
+
+// REST OPERATOR
+
+function openFridge(...foods) {
+    console.log(...foods);
+}
+function getFood(...foods){
+    return foods;
+}
+
+const food1 = "pizza";
+const food2 = "burger";
+const food3 = "hotDog";
+
+const food = getFood(food1, food2, food3);
+console.log(food);
+
+function sum(...numbers) {
+    let result = 0;
+    for (let number of numbers) {
+        result += number;
+    }
+    return result;
+}
+
+function getAverage(...numbers) {
+    let result = 0;
+    for (let number of numbers) {
+        result += number;
+    }
+    return result / numbers.length;
+}

@@ -1,0 +1,53 @@
+#container {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+button {
+    font-size: 1.5rem;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(189, 50, 57);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+button:hover {
+    background-color: rgb(158, 27, 33);
+}
+
+button:active {
+    background-color: rgb(100, 13, 17);
+}
+
+input {
+    font-size: 2rem;
+    width: 150px;
+    text-align: center;
+}
+
+#diceResult {
+    margin-bottom: 1rem;
+}
+
+#sum {
+    margin-bottom: 1rem;
+}
+
+#diceImages {
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+    justify-content: center;
+}
+
+#diceImages img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    object-fit: contain;
+}
