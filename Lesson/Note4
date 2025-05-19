@@ -1,0 +1,121 @@
+// object 
+const person1 = {
+    firstName: "Spongebob",
+    lastName: "Squarepants",
+    age: 30,
+    isEmployed: true,
+    favFood: "burger",
+    sayHello: function(){console.log("hi! I am cool!")},
+    sayBye: () => console.log("Bye!"),
+    eat: function(){console.log(`${this.name} is eating ${this.favFood}`)},
+}
+
+// constructor
+function Car(model, year, color) {
+    this.model = model,
+    this.year = year,
+    this.color = color
+}
+
+const car1 = new Car("Mustang", 2024, "Red");
+
+// class
+class Product{
+    constructor(name, price){
+        this.name = name;
+        this.price = price;
+    }
+
+    displayProduct(){
+        console.log(`Product: ${this.name}`);
+        console.log(`Price: $${this.price.toFixed(2)}`);
+    }
+
+    calculateTotal(salesTax){
+        return this.price + (this.price * salesTax);
+    }
+}
+
+const salesTax = 0.05;
+const product1 = new Product("Shirt", 19.99);
+
+
+product1.displayProduct();
+
+const total = product1.calculateTotal(salesTax);
+
+// static
+class MathUtil {
+    static PI = 3.14;
+    static getDiameter(radius){
+        return radius * 2;
+    }
+}
+
+console.log(MathUtil.PI); // we can access PI without creating an object
+console.log(MathUtil.getDiameter(10)); // same applies to objects
+
+class User{
+
+    static userCount = 0;
+
+    constructor(username){
+        this.username = username;
+        User.userCount++;
+    }
+
+    static getUserCount(){
+        console.log(`There are ${User.userCount} users online`);
+    }
+    sayHello(){
+        console.log(`Hello, my username is ${this.username}`);
+    }
+}
+
+const user1 = new User("Spongebob");
+const user2 = new User("Patrick");
+const user3 = new User("Sandy");
+
+// inheritance
+class Animal{
+
+    alive = true;
+
+    eat(){
+        console.log(`This ${this.name} is eating`);
+    }
+    sleep(){
+        console.log(`This ${this.name} is sleeping`);
+    }
+}
+
+class Rabbit extends Animal{
+
+    name = "rabbit";
+
+    run(){
+        console.log(`This ${this.name} is running`);
+    }
+}
+
+class Fish extends Animal{
+
+    name = "fish";
+
+    swim(){
+        console.log(`This ${this.name} is swimming`);
+    }
+}
+
+class Hawk extends Animal{
+    
+    name = "hawk";
+
+    fly(){
+        console.log(`This ${this.name} is flying`);
+    }
+}
+
+const rabbit = new Rabbit();
+const fish = new Fish();
+const hawk = new Hawk();

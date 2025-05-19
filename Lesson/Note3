@@ -1,0 +1,96 @@
+// callback 
+sum(display, 1, 2);
+
+function sum(callback, x, y) {
+    let result = x + y;
+    callback(result);
+}
+
+function display(result) {
+    console.log(result);
+}
+
+// forEach()
+let numbers = [1, 2, 3, 4, 5];
+numbers.forEach(display);
+numbers.forEach(double);
+
+function display(element) {
+    // smth
+}
+
+function double(element, index, array) {
+    array[index] = element * 2;
+}
+
+// .map() - creates a new array
+const num = [1,2,3,4,5];
+const squares = num.map(square);
+
+function square(element) {
+    return Math.pow(element, 2);
+}
+
+const dates = ["2024-1-10", "2025-2-20", "2026-3-30"];
+const formattedDates = dates.map(formatDates);
+
+function formatDates(element){
+    const parts = element.split("-");
+    return `${parts[1]}/${parts[2]}/${parts[0]}`;
+}
+
+// .filter() - creates a new array
+const words = ['apple', 'orange', 'kiwi', 'banana', 'pomegranate', 'coconut',];
+const longWords = words.filter(getLongWords);
+const shortWords = words.filter(getShortWords);
+
+console.log(shortWords);
+
+function getShortWords(element){
+    return element.length <= 6;
+}
+
+function getLongWords(element){
+    return element.length > 6;
+}
+
+// .reduce() = reduce the elements of an array to a single value
+const prices = [5, 45, 54, 435, 123];
+const total = prices.reduce(sum);
+
+function sum(accumulator, element) {
+    return accumulator + element;
+}
+
+const scores = [75, 50, 90, 80, 65, 95];
+const maximum = scores.reduce(getMax);
+
+function getMax(accumulator, element){
+    return Math.max(accumulator, element);
+}
+
+// function expression 
+const hello = function() {
+    console.log("hello");
+}
+
+setTimeout(callback, 3000); // execute callback after 3 secs
+
+setTimeout(function() {
+    // smth
+}, 3000);
+
+const nums = [1, 2, 3, 4, 5, 6];
+
+// instead of passing a function, we just pass a function expression
+const square = numbers.map(function(element){
+    return Math.pow(element, 2);
+});
+
+// arrow function
+const arrow = (name) => console.log(name);
+
+const arrowOld = (name) => {console.log(name)
+                            console.log("you are old")};
+
+const square = numbers.map((element) => Math.pow(element, 2));
