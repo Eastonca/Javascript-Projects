@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Blackjack.css">
+    <title>Blackjack</title>
+</head>
+<body>
+    <h1 class="title">Blackjack</h1>
+
+    <div class="menuPage" style="display: none">
+        <h2 class="annouce">Ready to become the next billionaire?</h2>
+        <button id="startBtn">Start Game</button>
+    </div>
+
+    <div class="gamePage">
+        <div class="cardsInfoPanel">
+            <p id="aiCurrentCards">Bot's cards: ? ? ?</p>
+            <p id="userCurrentCards">Your cards: 3 10 4</p>
+        </div>
+       
+        <div class="playerChoices">    
+            <div class="newCardPanel">
+                <button id="hitBtn">Hit</button>
+                <button id="standBtn">Stand</button>
+                <button id="doubleBtn">Double Down</button>
+            </div>  
+        </div>
+        
+        <div class="betPanel">
+            <button id="plus100Btn">+100</button>      
+            <button id="plus10Btn">+10</button>
+            <p id="betAmount">Bet Amount: 10</p>
+            <button id="minus10Btn">-10</button>      
+            <button id="minus100Btn">-100</button>
+        </div>
+
+        <div class="moneyInfoPanel">
+            <p id="netWorth">Net Worth: $100</p>
+            <p id="goal">Goal: $500</p>
+        </div>    
+    </div>
+    
+    <script src="Blackjack.js"></script>
+</body>
+</html>
