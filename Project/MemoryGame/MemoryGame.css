@@ -37,51 +37,67 @@ body {
 }
 
 #greenBtn {
-    background-color: hsl(120, 85%, 39%);
+    background-color: hsl(120, 85%, 35%);
 }
 
 #greenBtn:hover {
-    background-color: hsl(120, 87%, 29%);
+    background-color: hsl(120, 87%, 25%);
 }
 
 #greenBtnLit {
-    background-color: hsl(120, 87%, 70%);
+    background-color: hsl(120, 87%, 65%);
+}
+
+#greenBtn:active {
+    background-color: hsl(120, 85%, 15%);
 }
 
 #redBtn {
-    background-color: hsl(0, 94%, 43%);
+    background-color: hsl(0, 94%, 45%);
 }
 
 #redBtn:hover {
-    background-color: hsl(0, 94%, 33%);
+    background-color: hsl(0, 94%, 35%);
 }
 
 #redBtnLit {
-    background-color: hsl(0, 94%, 73%);
+    background-color: hsl(0, 94%, 75%);
+}
+
+#redBtn:active {
+    background-color: hsl(0, 94%, 25%);
 }
 
 #yellowBtn {
-    background-color: hsl(64, 87%, 48%);
+    background-color: hsl(64, 87%, 45%);
 }
 
 #yellowBtn:hover {
-    background-color: hsl(64, 87%, 38%);
+    background-color: hsl(64, 87%, 35%);
 }
 
 #yellowBtnLit {
-    background-color: hsl(64, 87%, 73%);
+    background-color: hsl(64, 87%, 75%);
+}
+
+#yellowBtn:active {
+    background-color: hsl(64, 87%, 25%);
 }
 
 #blueBtn {
-    background-color: hsl(219, 84%, 38%);
+    background-color: hsl(219, 84%, 40%);
 }
 
 #blueBtn:hover {
-    background-color: hsl(219, 84%, 28%);
+    background-color: hsl(219, 84%, 30%);
 }
 
 #blueBtnLit {
-    background-color: hsl(219, 84%, 68%);
+    background-color: hsl(219, 84%, 75%);
+}
+
+#blueBtn:active {
+    background-color: hsl(219, 84%, 20%);
 }
 
 .roundInfoPanel {
