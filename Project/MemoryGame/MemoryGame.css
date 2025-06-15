@@ -11,6 +11,12 @@ body {
     justify-content: center;
 }
 
+.disabled {
+    pointer-events: none;      /* prevents hover and click */
+    opacity: 0.9;              /* optional: visual feedback it's disabled */
+    transition: none;          /* disables transition effects */
+}
+
 #title {
     margin-top: 5vh;
     font-family: 'Gill Sans';
@@ -36,16 +42,16 @@ body {
     cursor: pointer;
 }
 
+.lit {
+    filter: brightness(1.5);
+}
+
 #greenBtn {
     background-color: hsl(120, 85%, 35%);
 }
 
 #greenBtn:hover {
     background-color: hsl(120, 87%, 25%);
-}
-
-#greenBtnLit {
-    background-color: hsl(120, 87%, 65%);
 }
 
 #greenBtn:active {
@@ -60,10 +66,6 @@ body {
     background-color: hsl(0, 94%, 35%);
 }
 
-#redBtnLit {
-    background-color: hsl(0, 94%, 75%);
-}
-
 #redBtn:active {
     background-color: hsl(0, 94%, 25%);
 }
@@ -76,10 +78,6 @@ body {
     background-color: hsl(64, 87%, 35%);
 }
 
-#yellowBtnLit {
-    background-color: hsl(64, 87%, 75%);
-}
-
 #yellowBtn:active {
     background-color: hsl(64, 87%, 25%);
 }
@@ -90,10 +88,6 @@ body {
 
 #blueBtn:hover {
     background-color: hsl(219, 84%, 30%);
-}
-
-#blueBtnLit {
-    background-color: hsl(219, 84%, 75%);
 }
 
 #blueBtn:active {
@@ -118,7 +112,7 @@ body {
     color: rgb(255, 255, 255);
     background-color: hsl(0, 0%, 54%);
     border-width: 5px;
-    border-radius: 5px;
+    border-radius: 5px 15px 15px 40px;
 }
 
 #gameStart:hover {

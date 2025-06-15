@@ -3,10 +3,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const startBtn = get("gameStart");
 
+const maxRound = 5;
 const colors = ["green", "red", "yellow", "blue"];
 let pattern = [];
-let playerInput = [];
-let round = 0;
+let round;
 
 const buttons = {
     green: get("greenBtn"),
@@ -23,13 +23,16 @@ const sounds = {
 }
 
 const gameOverSound = new Audio("audio/gameOver.mp3");
-gameOverSound.volume = 0.5;
+gameOverSound.volume = 0.3;
+const gameWinningSound = new Audio("audio/winning.mp3");
+gameWinningSound.volume = 0.3;
 
 const roundDisplay = get("round");
 const turnDisplay = get("turnDisplay")
 
 async function playSound(sound) {
     return new Promise(resolve => {
+        sound.currentTime = 0
         sound.addEventListener("ended", resolve);
         sound.play();
     });
@@ -37,30 +40,38 @@ async function playSound(sound) {
 
 startBtn.addEventListener("click", async event => {
     startBtn.style.display = "none";
+    setButtonsDisabled(true);
     resetGame();
-    for (let i = 0; i < 12; i++) {
-        roundDisplay.textContent = `Round: ${round}/12`;
-        await delay(1500);
+    while (round < maxRound) {
+        await delay(1000);
+        roundDisplay.textContent = `Round: ${round+1}/${maxRound}`;
         const result = await newRound();
-        if (!result) break;
-        round++; 
+        if (!result) {
+            break;
+        } else {
+            round++;
+        }
     }
+    if (round == maxRound) winning();
 });
 
 function resetGame() {
     pattern = [];
-    round = 1;
+    round = 0;
     turnDisplay.textContent = "Game Starting"
 }
 
 async function newRound() { 
     pattern.push(pickNewColor());
-    console.log(pattern);
     // change round number text and bot turn text
     await playPattern();
+    setButtonsDisabled(false);
     turnDisplay.textContent = "Your turn";
     // change bot turn to your turn
-    return await awaitPlayerInput();
+    const result = await awaitPlayerInput();
+
+    setButtonsDisabled(true);
+    return result; 
 }
 
 function pickNewColor() {
@@ -77,18 +88,13 @@ async function playPattern() {
 }
 
 function lightUpButton(color) {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
         const btn = buttons[color];
-        const originalId = btn.id;
-        const litId = originalId + "Lit";
+        btn.classList.add("lit");
+        await playSound(sounds[color]);
+        btn.classList.remove("lit");
 
-        btn.id = litId;
-        sounds[color].play();
-
-        setTimeout(() => {
-            btn.id = originalId;
-            resolve(); // finish this color
-        }, 1000);
+        resolve(); // finish this color
     });
 }
 
@@ -97,13 +103,21 @@ function awaitPlayerInput() {
         let currentStep = 0;
 
         const handleClick = (color) => {
+
             if (color !== pattern[currentStep]) {
                 cleanup();
                 gameOver();
                 return resolve(false);
             }
 
-            sounds[color].play();
+            const btn = buttons[color];
+            btn.classList.add("lit");
+
+            (async () => {
+                await playSound(sounds[color]);
+                btn.classList.remove("lit");
+            })();
+
             currentStep++;
 
             if (currentStep === pattern.length) {
@@ -126,10 +140,6 @@ function awaitPlayerInput() {
     });
 }
 
-function isValid(index) {    
-
-}
-
 async function gameOver() {
     // display game over text 
     turnDisplay.textContent = "Incorrect sequence. You lost!";
@@ -137,4 +147,20 @@ async function gameOver() {
     await playSound(gameOverSound);
     // show start game button
     startBtn.style.display = "block";
+}
+
+async function winning() {
+    turnDisplay.textContent = "You won! Congrats!"
+    await playSound(gameWinningSound);
+    startBtn.style.display = "block";
+}
+
+function setButtonsDisabled(disabled) {
+    for (const color of Object.keys(buttons)) {
+        if (disabled) {
+            buttons[color].classList.add("disabled");
+        } else {
+            buttons[color].classList.remove("disabled");
+        }
+    }
 }
