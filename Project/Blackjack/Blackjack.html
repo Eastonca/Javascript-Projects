@@ -9,7 +9,7 @@
 <body>
     <h1 class="title">Blackjack</h1>
 
-    <div id="menuPage" class="page">
+    <div id="menuPage" class="page ">
         <h2 id="quote">Ready to become the next billionaire?</h2>
         <button id="startBtn">Start Game</button>
     </div>
@@ -22,11 +22,12 @@
     </div>
 
     <div id="gamePage" class="page active">
-        <div class="cardsInfoPanel">
-            <p id="botCurrentCards">Bot's cards: </p>
-            <p id="userCurrentCards">Your cards: 3 10 4</p>
-            <p id="annouce">Game starting</p>
+        <div class="cardsInfoPanel" >
+            <p id="dealerCurrentCards">Dealer's cards: </p>
+            <p id="userCurrentCards">Your cards:</p>
         </div>
+
+        <p id="annouce">Game starting</p>
        
         <div class="playerChoices">    
             <div class="newCardPanel">
@@ -37,20 +38,22 @@
         </div>
         
         <div class="betPanel">
-            <p id="betTitle">Bet Amount</p>
+            <p id="betTitle">Make a bet</p>
             <button id="plus100Btn">+100</button>      
             <button id="plus10Btn">+10</button>
-            <p id="betAmount">10</p>
+            <p id="betAmount">$10</p>
             <button id="minus10Btn">-10</button>      
             <button id="minus100Btn">-100</button>
+            <button id="betSubmitBtn">Submit</button>
         </div>
 
         <div class="moneyInfoPanel">
             <p id="netWorth">Net Worth: $100</p>
             <p id="goal">Goal: $500</p>
+            <p id="betAmountInfo">Bet Amount: ?</p>
         </div>    
     </div>
     
-    <script src="Blackjack.js"></script>
+    <script type="module" src="Blackjack.js"></script>
 </body>
 </html>
