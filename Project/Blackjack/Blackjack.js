@@ -1,6 +1,7 @@
 // ====== 1. DOM CACHE ======
 const get = id => document.getElementById(id);
 const queryGet = name => document.querySelector(name);
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const startBtn = get("startBtn");
 const menuPage = get("menuPage");
@@ -38,6 +39,7 @@ const infoPanel = queryGet(".moneyInfoPanel");
 // audio
 const sounds = {
     drawCard: new Audio("audio/drawCard.mp3"),
+    error: new Audio("audio/error.mp3"),
 }
 
 // utils
@@ -47,16 +49,17 @@ for (let i = 0; i < 4; i++) {
   fullDeck = fullDeck.concat(deck); 
 }
 
-import { playSoundAsync, playSound } from './utils.js';
+import { playSoundAsync, playSound, setupBtnClickSFX, setupBtnHoverSFX } from './utils.js';
 
 // ====== 2. GAME STATE ======
 const state = {
     currentPage: null,
     playerMoney: 100,
-    currentBet: 10,
+    goal: 500,
+    currentBet: "?",
     gameStatus: "waiting", // "loading", "dealerTurn", "playerTurn", 
     playerCards: [],
-    botCardsSum: 0
+    dealerCards: [],
 };
 
 // ====== 3. EVENT LISTENERS ======
@@ -96,27 +99,20 @@ async function newRound() {
     // bot draws cards then stop
     state.gameStatus = "dealerTurn";
     annouceText.textContent = "Dealer drawing cards"
-    // play sound, wait 1 second
-    await playSoundAsync(sounds["drawCard"]);
-    dealerCards.textContent = "Dealer's cards: ?"
-    // play sound, wait 1 second
-    await playSoundAsync(sounds["drawCard"]);
-    dealerCards.textContent = "Dealer's cards: ? ?"
+    await dealerDrawCards();
 
     // players drawing cards
     state.gameStatus = "playerTurn";
     annouceText.textContent = "Player drawing cards"
     // play sound, wait 1 second
-    await playSoundAsync(sounds["drawCard"]);
-    state.playerCards.push(drawCard());
-    userCards.textContent = `Your cards: ${state.playerCards.join(" ")}`;
+    await playerDrawCard();
     // play sound, wait 1 second
-    await playSoundAsync(sounds["drawCard"]);
-    state.playerCards.push(drawCard());
-    userCards.textContent = `Your cards: ${state.playerCards.join(" ")}`;
+    await playerDrawCard();
 
     annouceText.textContent = "Your turn";
     // enable buttons and add listeners 
+    choicesPanel.classList.remove("invisible");
+    enablePlayerInput();
     // after player finishes, determine the winner
 
     // update net worth and reset bet amount and cards
@@ -127,12 +123,9 @@ function waitForPlayerBet() {
 
         const onClick = () => {
             betSubmitBtn.removeEventListener("click", onClick);
-            betAmountInfo.textContent = `Bet Amount: $${state.currentBet}`;
-
-            choicesPanel.classList.remove("invisible");
-            infoPanel.classList.remove("invisible");
             betPanel.classList.add("invisible");
-
+            state.playerMoney -= state.currentBet;
+            updateInfoDisplay();
             resolve();
         };
 
@@ -140,6 +133,9 @@ function waitForPlayerBet() {
     });
 }
 
+function busted() {
+    annouceText.textContent = "Busted!";
+}
 // ====== 5. UTILITY FUNCTIONS ======
 function setPage(page) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
@@ -147,32 +143,27 @@ function setPage(page) {
     state.currentPage = page;
 }
 
-function increaseBet(amount) {
-    if (amount + state.currentBet > state.playerMoney) {
-        annouceText.textContent = "You don't have enough";
-        setTimeout(() => {
-            annouceText.textContent = "Bet making stage";
-        }, 1500);
-        return;
-    } 
-    state.currentBet += amount;
-    updateBetDisplay();
-}
-
-function decreaseBet(amount) {
-    if (state.currentBet - amount <= 0) {
-        annouceText.textContent = "Bet can't go below 0";
-        setTimeout(() => {
-            annouceText.textContent = "Bet making stage";
-        }, 1500);
-        return;
-    }
-    state.currentBet -= amount;
-    updateBetDisplay();
-}
-
 function updateBetDisplay() {
     document.getElementById("betAmount").textContent = `$${state.currentBet}`;
+}
+
+function updateInfoDisplay() {
+    betAmountInfo.textContent = `Bet Amount: $${state.currentBet}`;
+    netWorthInfo.textContent = `Net Worth: $${state.playerMoney}`;
+    goalInfo.textContent = `Goal: $${state.goal}`;
+}
+
+function updateCardsDisplay() {
+    userCards.textContent = `Your cards: ${state.playerCards.join(" ")}`;
+    dealerCards.textContent = `Dealer's cards: ${state.dealerCards.join(" ")}`;
+    // if (state.dealerCards.length === 0) {
+    //     `Dealer's cards: n/a`;
+    // } else {
+    //     const visibleCard = state.dealerCards[0];
+    //     const hiddenCount = state.dealerCards.length - 1;
+    //     const hiddenCards = Array(hiddenCount).fill("?").join(" ");
+    //     dealerCards.textContent = `Dealer's cards: ${visibleCard} ${hiddenCards}`;
+    // }
 }
 
 async function startLoading() {
@@ -191,7 +182,7 @@ async function startLoading() {
         progressBar.addEventListener("transitionend", onTransitionEnd);
 
         // Start the animation
-        progressBar.style.transition = "width 1s linear";
+        progressBar.style.transition = "width 0.3s linear";
         progressBar.style.width = "100%";
     });
 }
@@ -203,20 +194,16 @@ function resetGame() {
     state.botCardsSum = 0; 
     
     annouceText.textContent = "Bet making stage";
-    netWorthInfo.textContent = "Net Worth: $100";
-    goalInfo.textContent = "Goal: $500";
-    betAmountInfo.textContent = "?";
-    dealerCards.textContent = "Dealer's cards:";
-    userCards.textContent = "Your cards:";
-    betAmount.textContetn = "$10";
-    
+    updateInfoDisplay();
+    updateBetDisplay();
+
     choicesPanel.classList.add("invisible");
-    infoPanel.classList.add("invisible");
+    infoPanel.classList.remove("invisible");
     betPanel.classList.remove("invisible");
 }
 
 function enablePlayerInput() {
-
+    setUpChoicesBtns();
 }
 
 function drawCard() {
@@ -224,9 +211,136 @@ function drawCard() {
     const card = fullDeck.splice(index, 1)[0]; // remove from deck
     return card;
 }
-// ====== 6. INIT ======
+
+async function playerDrawCard() {
+    await playSoundAsync(sounds["drawCard"]);
+    state.playerCards.push(drawCard());
+    updateCardsDisplay();
+}
+
+async function dealerDrawCards() {
+    const getSum = () => state.dealerCards.reduce((a, b) => a + b, 0);
+
+    const drawCardAndUpdate = async (card = null) => {
+        const drawnCard = card ?? drawCard();
+        state.dealerCards.push(drawnCard);
+        fullDeck.splice(fullDeck.indexOf(drawnCard), 1); // remove from deck
+        await playSoundAsync(sounds["drawCard"]);
+        updateCardsDisplay();
+    };
+
+    const weightedAI = () => {
+        const rand = Math.random();
+        if (rand < 0.20) return 1;            // 20%
+        else if (rand < 0.55) return 2;       // +35%
+        else if (rand < 0.80) return 3;       // +25%
+        else return 4;                        // +20%
+    };
+
+    const aiLevel = weightedAI();
+    console.log("AI Level:", aiLevel);
+
+    // Initial 2 cards
+    await drawCardAndUpdate();
+    await drawCardAndUpdate();
+
+    let sum = getSum();
+
+    switch (aiLevel) {
+        case 1: // Random: draw randomly
+            while (sum <= 18 || Math.random() < 0.5) {
+                await drawCardAndUpdate();
+                sum = getSum();
+            }
+            break;
+
+        case 2: // Basic: draw until 16 or more
+            while (sum < 16) {
+                await drawCardAndUpdate();
+                sum = getSum();
+            }
+            break;
+
+        case 3: // Smart: aim for 18–19
+            while (sum < 18) {
+                const safeCard = fullDeck.find(c => sum + c <= 19);
+                await drawCardAndUpdate(safeCard);
+                sum = getSum();
+            }
+            break;
+
+        case 4: // Cheater: aim for 20–21
+            while (sum < 20) {
+                const safeCard = fullDeck.find(c => sum + c <= 21);
+                await drawCardAndUpdate(safeCard);
+                sum = getSum();
+            }
+            break;
+
+        default:
+            throw new Error(`Invalid AI level: ${aiLevel}`);
+    }
+
+    console.log("Dealer cards:", state.dealerCards);
+    console.log("Sum:", sum);
+}
+
+// ====== 6. BTN BEHAVIOR ======
+
+function increaseBet(amount) {
+    if (amount + state.currentBet > state.playerMoney) {
+        annouceText.textContent = "You don't have enough";
+        playSound(sounds["error"]);
+        setTimeout(() => {
+            annouceText.textContent = "Bet making stage";
+        }, 1500);
+        return;
+    } 
+    state.currentBet += amount;
+    updateBetDisplay();
+}
+
+function decreaseBet(amount) {
+    if (state.currentBet - amount <= 0) {
+        annouceText.textContent = "Bet can't go below 0";
+        playSound(sounds["error"]);
+        setTimeout(() => {
+            annouceText.textContent = "Bet making stage";
+        }, 1500);
+        return;
+    }
+    state.currentBet -= amount;
+    updateBetDisplay();
+}
+
+async function onHit() {
+    annouceText.textContent = "Drawing card";
+    choicesPanel.classList.add("invisible");
+    await playerDrawCard();
+    
+    if (state.playerCards.reduce((sum, value) => sum + value, 0) > 21) {
+        await delay(1000);
+        busted();
+        return;
+    }
+
+    choicesPanel.classList.remove("invisible");
+    annouceText.textContent = "Your turn";
+}
+
+function onStand() {
+
+}
+
+function onDouble() {
+
+}
+
+// ====== 7. INIT ======
 (() => {
     const pages = document.querySelectorAll(".page");
     pages.forEach(panel => panel.classList.remove("active"));
     menuPage.classList.add("active");
+    setupBtnClickSFX("audio/btnClick.mp3");
+    setupBtnHoverSFX("audio/btnHover.mp3");
 })();

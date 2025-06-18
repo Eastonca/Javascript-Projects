@@ -11,3 +11,22 @@ export function playSound(sound) {
     sound.play();
 }
 
+export function setupBtnClickSFX(audioPath) {
+    const clickSound = new Audio(audioPath);
+  
+    document.querySelectorAll("button:not(.no-sfx)").forEach(button => {
+      button.addEventListener("click", () => {
+        playSound(clickSound);
+      });
+    });
+}
+
+export function setupBtnHoverSFX(audioPath) {
+    const hoverSound = new Audio(audioPath);
+  
+    document.querySelectorAll("button:not(.no-sfx)").forEach(button => {
+      button.addEventListener("mouseenter", () => {
+        playSound(hoverSound);
+      });
+    });
+  }
