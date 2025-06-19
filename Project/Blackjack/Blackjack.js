@@ -43,7 +43,16 @@ const cardsPanel = queryGet(".cardsInfoPanel");
 const sounds = {
     drawCard: new Audio("audio/drawCard.mp3"),
     error: new Audio("audio/error.mp3"),
+    success: new Audio("audio/success.mp3"),
+    winning: new Audio("audio/winningRelax.mp3"),
+    losing: new Audio("audio/losingViolin.mp3"),
+    alert: new Audio("audio/alertDramatic.mp3"),
+    gameOver: new Audio("audio/losingHorn.mp3"),
+    bgMusic: new Audio("audio/casinoMusic.mp3"),
 }
+
+sounds["bgMusic"].volume = 0.2;
+sounds["losing"].volume = 0.4;
 
 // utils
 const deck = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -68,13 +77,13 @@ const cardValues = {
 };
 let gameStarted = false;
 
-import { playSoundAsync, playSound, setupBtnClickSFX, setupBtnHoverSFX } from './utils.js';
+import { playSoundAsync, playSound, stopSound, setupBtnClickSFX, setupBtnHoverSFX } from './utils.js';
 
 // ====== 2. GAME STATE ======
 const state = {
     currentPage: null,
     playerMoney: 100,
-    goal: 500,
+    goal: 200,
     currentBet: "?",
     gameStatus: "waiting", // "loading", "dealerTurn", "playerTurn", 
     playerCards: [],
@@ -147,6 +156,7 @@ async function startGame() {
     gameStarted = true;
     startBtn.removeEventListener("click", startGame);
     // summon loading page
+    playSound(sounds["bgMusic"]);
     state.gameStatus = "loading";
     setPage(loadingPage);
     resetGame();
@@ -424,20 +434,26 @@ async function playerDoneDrawing() {
     await revealDealerCards();
     if (playerSum > 21 && dealerSum > 21) {
         setAnnouce("Both busted! Nobody won!");
+        playSound(sounds["losing"]);
         state.playerMoney += state.currentBet;
     } else if (playerSum === dealerSum) {
         setAnnouce("It's a tie!");
+        playSound(sounds["alert"]);
         state.playerMoney += state.currentBet;
     } else if (playerSum <= 21 && dealerSum > 21) {
         setAnnouce(`Congrats! You have won and earned $${state.currentBet}`);
+        playSound(sounds["success"]);
         state.playerMoney += state.currentBet * 2;
     } else if (playerSum > 21 && dealerSum <= 21) {
         setAnnouce(`You lost! $${state.currentBet} bet has been given to the dealer`);
+        playSound(sounds["losing"]);
     } else if (playerSum > dealerSum) {
         setAnnouce(`Congrats! You have won and earned $${state.currentBet}`);
+        playSound(sounds["success"]);
         state.playerMoney += state.currentBet * 2;
     } else if (playerSum < dealerSum) {
         setAnnouce(`You lost! $${state.currentBet} bet has been given to the dealer`);
+        playSound(sounds["losing"]);
     } else {
         console.error("Unknown outcome");
     }
@@ -447,13 +463,17 @@ async function playerDoneDrawing() {
 
     if (state.playerMoney < 10) {
         hidePanel(betPanel);
+        stopSound(sounds["bgMusic"]);
         setAnnouce("You went bankrupted");
-        await delay(3000);
+        playSound(sounds["gameOver"]);
+        await delay(4000);
         gameStarted = false;
         gameOver();
     } else if (state.playerMoney >= 500) {
         hidePanel(betPanel);
-        setAnnouce("You have reached your goal!")
+        stopSound(sounds["bgMusic"]);
+        setAnnouce("You have reached your goal!");
+        playSound(sounds["winning"]);
         await delay(3000);
         gameStarted = false;
         gameOver();

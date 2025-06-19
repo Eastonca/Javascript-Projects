@@ -11,6 +11,11 @@ export function playSound(sound) {
     sound.play();
 }
 
+export function stopSound(audio) {
+    audio.pause();        
+    audio.currentTime = 0;
+}
+
 export function setupBtnClickSFX(audioPath) {
     const clickSound = new Audio(audioPath);
   
